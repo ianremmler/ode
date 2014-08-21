@@ -11,7 +11,7 @@ Get ODE [here](http://bitbucket.org/odedevs/ode/).
 ODE must be compiled as a shared library with double precision support.  The
 following will configure ODE with these options:
 
-`> cd /path/to/ode-src; ./configure --enable-double-precision --enabled-shared`
+`> cd /path/to/ode-src; ./configure --enable-double-precision --enable-shared`
 
 Todo
 * Heightfields
