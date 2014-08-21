@@ -6,6 +6,8 @@ sticks fairly closely to the development version of the ODE C API, with a few
 stylistic and idiomatic changes thrown in here and there where it seemed
 useful.
 
+Get ODE [here](http://bitbucket.org/odedevs/ode/).
+
 ODE must be compiled as a shared library with double precision support.  The
 following will configure ODE with these options:
 
