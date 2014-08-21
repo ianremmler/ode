@@ -1,6 +1,7 @@
 package ode
 
 // #include <ode/ode.h>
+// extern void callMovedCallback(dBodyID body);
 import "C"
 
 import (
@@ -8,10 +9,21 @@ import (
 )
 
 var (
-	bodyData = map[Body]interface{}{}
+	bodyData       = map[Body]interface{}{}
+	movedCallbacks = map[Body]MovedCallback{}
 )
 
 type Body uintptr
+
+type MovedCallback func(b Body)
+
+//export movedCallback
+func movedCallback(c C.dBodyID) {
+	body := cToBody(c)
+	if cb, ok := movedCallbacks[body]; ok {
+		cb(body)
+	}
+}
 
 func cToBody(c C.dBodyID) Body {
 	return Body(unsafe.Pointer(c))
@@ -240,7 +252,15 @@ func (b Body) SetGravityMode(mode bool) {
 	C.dBodySetGravityMode(b.c(), C.int(btoi(mode)))
 }
 
-// TODO void dBodySetMovedCallback(dBodyID b, void (*callback)(dBodyID));
+func (b Body) SetMovedCallback(cb MovedCallback) {
+	if cb == nil {
+		C.dBodySetMovedCallback(b.c(), (*[0]byte)(nil)) // clear callback
+		delete(movedCallbacks, b)
+	} else {
+		movedCallbacks[b] = cb
+		C.dBodySetMovedCallback(b.c(), (*[0]byte)(unsafe.Pointer(C.callMovedCallback)))
+	}
+}
 
 func (b Body) GravityMode() bool {
 	return C.dBodyGetGravityMode(b.c()) != 0

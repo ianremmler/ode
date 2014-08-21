@@ -5,3 +5,7 @@
 void callNearCallback(void *data, dGeomID obj1, dGeomID obj2) {
 	nearCallback(data, obj1, obj2);
 }
+
+void callMovedCallback(dBodyID body) {
+	movedCallback(body);
+}
