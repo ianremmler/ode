@@ -37,6 +37,8 @@ var (
 	geomData = map[Geom]interface{}{}
 )
 
+// Geom
+
 type Geom interface {
 	c() C.dGeomID
 	Destroy()
@@ -79,6 +81,8 @@ type Geom interface {
 	Collide2(other Geom, data interface{}, cb NearCallback)
 	Next() Geom
 }
+
+// GeomBase
 
 type GeomBase uintptr
 
@@ -211,8 +215,6 @@ func (g GeomBase) Enabled() bool {
 	return bool(C.dGeomIsEnabled(g.c()) != 0)
 }
 
-// TODO dGeomLowLevelControl
-
 func (g GeomBase) RelPointPos(pt Vector3) Vector3 {
 	pos := NewVector3()
 	C.dGeomGetRelPointPos(g.c(), C.dReal(pt[0]), C.dReal(pt[1]), C.dReal(pt[2]), (*C.dReal)(&pos[0]))
@@ -326,10 +328,6 @@ func (s Sphere) Radius() float64 {
 func (s Sphere) SpherePointDepth(pt Vector3) float64 {
 	return float64(C.dGeomSpherePointDepth(s.c(), C.dReal(pt[0]), C.dReal(pt[1]), C.dReal(pt[2])))
 }
-
-// TODO ??? func (g Geom) NewConvex...
-
-// TODO ??? func (g Geom) SetConvex...
 
 // Box
 

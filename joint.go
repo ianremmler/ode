@@ -98,6 +98,8 @@ var (
 	jointData = map[Joint]interface{}{}
 )
 
+// JointFeedback
+
 type JointFeedback struct {
 	F1 Vector3 // force applied to body 1
 	T1 Vector3 // torque applied to body 1
@@ -118,6 +120,8 @@ func (f *JointFeedback) toC(c *C.dJointFeedback) {
 	f.F2.toC((*C.dReal)(&c.f2[0]))
 	f.T2.toC((*C.dReal)(&c.t2[0]))
 }
+
+// JointGroup
 
 type JointGroup uintptr
 
@@ -141,6 +145,8 @@ func (g JointGroup) Empty() {
 	C.dJointGroupEmpty(g.c())
 }
 
+// Joint
+
 type Joint interface {
 	c() C.dJointID
 	Destroy()
@@ -155,6 +161,8 @@ type Joint interface {
 	SetFeedback(f *JointFeedback)
 	Feedback() *JointFeedback
 }
+
+// JointBase
 
 type JointBase uintptr
 
@@ -259,6 +267,8 @@ func (j JointBase) Feedback() *JointFeedback {
 	return f
 }
 
+// BallJoint
+
 type BallJoint struct {
 	JointBase
 }
@@ -290,6 +300,8 @@ func (j BallJoint) Anchor2() Vector3 {
 	C.dJointGetBallAnchor2(j.c(), (*C.dReal)(&pt[0]))
 	return pt
 }
+
+// HingeJoint
 
 type HingeJoint struct {
 	JointBase
@@ -351,6 +363,8 @@ func (j HingeJoint) AngleRate() float64 {
 	return float64(C.dJointGetHingeAngleRate(j.c()))
 }
 
+// SliderJoint
+
 type SliderJoint struct {
 	JointBase
 }
@@ -390,9 +404,13 @@ func (j SliderJoint) AddForce(force float64) {
 	C.dJointAddSliderForce(j.c(), C.dReal(force))
 }
 
+// ContactJoint
+
 type ContactJoint struct {
 	JointBase
 }
+
+// UniversalJoint
 
 type UniversalJoint struct {
 	JointBase
@@ -478,6 +496,8 @@ func (j UniversalJoint) AddTorques(torque1, torque2 float64) {
 	C.dJointAddUniversalTorques(j.c(), C.dReal(torque1), C.dReal(torque2))
 }
 
+// Hinge2Joint
+
 type Hinge2Joint struct {
 	JointBase
 }
@@ -546,6 +566,8 @@ func (j Hinge2Joint) AddTorques(torque1, torque2 float64) {
 	C.dJointAddHinge2Torques(j.c(), C.dReal(torque1), C.dReal(torque2))
 }
 
+// FixedJoint
+
 type FixedJoint struct {
 	JointBase
 }
@@ -562,9 +584,13 @@ func (j FixedJoint) Fix() {
 	C.dJointSetFixed(j.c())
 }
 
+// NullJoint
+
 type NullJoint struct {
 	JointBase
 }
+
+// AMotorJoint
 
 type AMotorJoint struct {
 	JointBase
@@ -625,6 +651,8 @@ func (j AMotorJoint) AddTorques(torque1, torque2, torque3 float64) {
 	C.dJointAddAMotorTorques(j.c(), C.dReal(torque1), C.dReal(torque2), C.dReal(torque3))
 }
 
+// LMotorJoint
+
 type LMotorJoint struct {
 	JointBase
 }
@@ -656,6 +684,8 @@ func (j LMotorJoint) Axis(num int) Vector3 {
 	return axis
 }
 
+// Plane2DJoint
+
 type Plane2DJoint struct {
 	JointBase
 }
@@ -671,6 +701,8 @@ func (j Plane2DJoint) Set2DYParam(parameter int, value float64) {
 func (j Plane2DJoint) Set2DAngleParam(parameter int, value float64) {
 	C.dJointSetPlane2DAngleParam(j.c(), C.int(parameter), C.dReal(value))
 }
+
+// PRJoint
 
 type PRJoint struct {
 	JointBase
@@ -733,6 +765,8 @@ func (j PRJoint) AngleRate() float64 {
 func (j PRJoint) AddTorque(torque float64) {
 	C.dJointAddPRTorque(j.c(), C.dReal(torque))
 }
+
+// PUJoint
 
 type PUJoint struct {
 	JointBase
@@ -831,6 +865,8 @@ func (j PUJoint) Angles() (float64, float64) {
 	return angle1, angle2
 }
 
+// PistonJoint
+
 type PistonJoint struct {
 	JointBase
 }
@@ -888,6 +924,8 @@ func (j PistonJoint) AddForce(force float64) {
 	C.dJointAddPistonForce(j.c(), C.dReal(force))
 }
 
+// DBallJoint
+
 type DBallJoint struct {
 	JointBase
 }
@@ -923,6 +961,8 @@ func (j DBallJoint) Anchor2() Vector3 {
 func (j DBallJoint) Distance() float64 {
 	return float64(C.dJointGetDBallDistance(j.c()))
 }
+
+// DHingeJoint
 
 type DHingeJoint struct {
 	JointBase
@@ -969,6 +1009,8 @@ func (j DHingeJoint) Anchor2() Vector3 {
 func (j DHingeJoint) Distance() float64 {
 	return float64(C.dJointGetDHingeDistance(j.c()))
 }
+
+// TransmissionJoint
 
 type TransmissionJoint struct {
 	JointBase

@@ -11,6 +11,8 @@ var (
 	worldData = map[World]interface{}{}
 )
 
+// World
+
 type World uintptr
 
 func NewWorld() World {
@@ -82,12 +84,6 @@ func (w World) UseSharedWorkingMemory(from World) bool {
 func (w World) CleanupWorkingMemory() {
 	C.dWorldCleanupWorkingMemory(w.c())
 }
-
-// TODO dWorldSetStepMemoryReservationPolicy
-
-// TODO dWorldSetStepMemoryManager
-
-// TODO dWorldSetStepThreadingImplementation
 
 func (w World) Step(stepSize float64) bool {
 	return C.dWorldStep(w.c(), C.dReal(stepSize)) != 0

@@ -8,6 +8,8 @@ import (
 	"unsafe"
 )
 
+// Space
+
 type Space interface {
 	c() C.dSpaceID
 	Destroy()
@@ -37,6 +39,8 @@ type Space interface {
 	NewQuadTreeSpace(center, extents Vector3, depth int) QuadTreeSpace
 	NewSweepAndPruneSpace(axisOrder int) SweepAndPruneSpace
 }
+
+// SpaceBase
 
 type SpaceBase uintptr
 
@@ -174,9 +178,13 @@ func (s SpaceBase) NewSweepAndPruneSpace(axisOrder int) SweepAndPruneSpace {
 	return cToSpace(C.dSweepAndPruneSpaceCreate(s.c(), C.int(axisOrder))).(SweepAndPruneSpace)
 }
 
+// SimpleSpace
+
 type SimpleSpace struct {
 	SpaceBase
 }
+
+// HashSpace
 
 type HashSpace struct {
 	SpaceBase
@@ -192,9 +200,13 @@ func (s HashSpace) Levels() (int, int) {
 	return int(min), int(max)
 }
 
+// QuadTreeSpace
+
 type QuadTreeSpace struct {
 	SpaceBase
 }
+
+// SweepAndPruneSpace
 
 type SweepAndPruneSpace struct {
 	SpaceBase

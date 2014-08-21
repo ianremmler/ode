@@ -3,6 +3,8 @@ package ode
 // #include <ode/ode.h>
 import "C"
 
+// Mass
+
 type Mass struct {
 	Center  Vector3
 	Inertia Matrix3
@@ -102,18 +104,6 @@ func (m *Mass) SetBoxTotal(totalMass float64, lens Vector3) {
 		C.dReal(lens[0]), C.dReal(lens[1]), C.dReal(lens[2]))
 	m.fromC(c)
 }
-
-// func (m *Mass) SetTriMesh(density float64, geom Geom) {
-// 	c := &C.dMass{}
-// 	C.dMassSetTrimesh(c, C.dReal(density), geom.c())
-// 	m.fromC(c)
-// }
-
-// func (m *Mass) SetTriMeshTotal(totalMass float64, geom Geom) {
-// 	c := &C.dMass{}
-// 	C.dMassSetTrimesh(c, C.dReal(totalMass), geom.c())
-// 	m.fromC(c)
-// }
 
 func (m *Mass) Adjust(mass float64) {
 	c := &C.dMass{}

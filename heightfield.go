@@ -7,6 +7,8 @@ import (
 	"unsafe"
 )
 
+// HeightfieldData
+
 type HeightfieldData uintptr
 
 func cToHeightfieldData(c C.dHeightfieldDataID) HeightfieldData {

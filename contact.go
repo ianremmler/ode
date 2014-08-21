@@ -23,6 +23,8 @@ const (
 	Approx1CtParam  = C.dContactApprox1
 )
 
+// SurfaceParameters
+
 type SurfaceParameters struct {
 	// must always be defined
 	Mode int
@@ -80,6 +82,8 @@ func (s *SurfaceParameters) toC(c *C.dSurfaceParameters) {
 	c.slip2 = C.dReal(s.Slip2)
 }
 
+// ContactGeom
+
 type ContactGeom struct {
 	Pos    Vector3
 	Normal Vector3
@@ -116,6 +120,8 @@ func (g *ContactGeom) toC(c *C.dContactGeom) {
 	c.side1 = C.int(g.Side1)
 	c.side2 = C.int(g.Side2)
 }
+
+// Contact
 
 type Contact struct {
 	Surface SurfaceParameters
