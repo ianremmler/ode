@@ -155,6 +155,10 @@ func Close() {
 	C.dCloseODE()
 }
 
+func CleanupAllDataForThread() {
+	C.dCleanupODEAllDataForThread()
+}
+
 func btoi(b bool) int {
 	if b {
 		return 1
