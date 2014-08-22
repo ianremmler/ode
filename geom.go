@@ -102,10 +102,6 @@ func cToGeom(c C.dGeomID) Geom {
 		g = Plane{base}
 	case RayClass:
 		g = Ray{base}
-	// case ConvexClass:
-	// g = &Convex{base}
-	// case TriMeshClass:
-	// g = &TriMesh{base}
 	case HeightfieldClass:
 		g = Heightfield{base}
 	default:

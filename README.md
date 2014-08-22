@@ -14,7 +14,8 @@ following will configure ODE with these options:
 `> cd /path/to/ode-src; ./configure --enable-double-precision --enable-shared`
 
 Todo
+* Convex hulls
 * Heightfields
-* Triangle Meshes
+* Triangle meshes
 * Probably other things I missed
 * Documentation and tests
