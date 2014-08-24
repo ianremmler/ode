@@ -16,5 +16,4 @@ Rectangle {
 			sim.update()
 		}
 	}
-	// Component.onCompleted: sim.init()
 }
