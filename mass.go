@@ -3,8 +3,7 @@ package ode
 // #include <ode/ode.h>
 import "C"
 
-// Mass
-
+// Mass represents object mass properties.
 type Mass struct {
 	Center  Vector3
 	Inertia Matrix3
@@ -23,6 +22,7 @@ func (m *Mass) fromC(c *C.dMass) {
 	m.Inertia.fromC((*C.dReal)(&c.I[0]))
 }
 
+// NewMass returns a new Mass instance.
 func NewMass() *Mass {
 	return &Mass{
 		Center:  NewVector3(),
@@ -30,19 +30,22 @@ func NewMass() *Mass {
 	}
 }
 
+// Check returns whether the mass's parameter values are valid.
 func (m *Mass) Check() bool {
 	c := &C.dMass{}
 	m.toC(c)
 	return C.dMassCheck(c) != 0
 }
 
+// SetZero sets the mass to 0.
 func (m *Mass) SetZero() {
 	c := &C.dMass{}
 	C.dMassSetZero(c)
 	m.fromC(c)
 }
 
-func (m *Mass) SetParameters(mass float64, com Vector3, inert Matrix3) {
+// SetParams sets the mass parameters.
+func (m *Mass) SetParams(mass float64, com Vector3, inert Matrix3) {
 	c := &C.dMass{}
 	C.dMassSetParameters(c, C.dReal(mass),
 		C.dReal(com[0]), C.dReal(com[1]), C.dReal(com[2]),
@@ -51,18 +54,21 @@ func (m *Mass) SetParameters(mass float64, com Vector3, inert Matrix3) {
 	m.fromC(c)
 }
 
+// SetSphere sets the mass for a sphere of given properties.
 func (m *Mass) SetSphere(density, radius float64) {
 	c := &C.dMass{}
 	C.dMassSetSphere(c, C.dReal(density), C.dReal(radius))
 	m.fromC(c)
 }
 
+// SetSphereTotal sets the mass for a sphere of given properties.
 func (m *Mass) SetSphereTotal(totalMass, radius float64) {
 	c := &C.dMass{}
 	C.dMassSetSphereTotal(c, C.dReal(totalMass), C.dReal(radius))
 	m.fromC(c)
 }
 
+// SetCapsule sets the mass for a capsule of given properties.
 func (m *Mass) SetCapsule(density float64, direction int, radius, length float64) {
 	c := &C.dMass{}
 	C.dMassSetCapsule(c, C.dReal(density), C.int(direction), C.dReal(radius),
@@ -70,6 +76,7 @@ func (m *Mass) SetCapsule(density float64, direction int, radius, length float64
 	m.fromC(c)
 }
 
+// SetCapsuleTotal sets the mass for a capsule of given properties.
 func (m *Mass) SetCapsuleTotal(totalMass float64, direction int, radius, length float64) {
 	c := &C.dMass{}
 	C.dMassSetCapsuleTotal(c, C.dReal(totalMass), C.int(direction), C.dReal(radius),
@@ -77,6 +84,7 @@ func (m *Mass) SetCapsuleTotal(totalMass float64, direction int, radius, length 
 	m.fromC(c)
 }
 
+// SetCylinder sets the mass for a cylinder of given properties.
 func (m *Mass) SetCylinder(density float64, direction int, radius, length float64) {
 	c := &C.dMass{}
 	C.dMassSetCylinder(c, C.dReal(density), C.int(direction), C.dReal(radius),
@@ -84,6 +92,7 @@ func (m *Mass) SetCylinder(density float64, direction int, radius, length float6
 	m.fromC(c)
 }
 
+// SetCylinderTotal sets the mass for a cylinder of given properties.
 func (m *Mass) SetCylinderTotal(totalMass float64, direction int, radius, length float64) {
 	c := &C.dMass{}
 	C.dMassSetCylinderTotal(c, C.dReal(totalMass), C.int(direction), C.dReal(radius),
@@ -91,6 +100,7 @@ func (m *Mass) SetCylinderTotal(totalMass float64, direction int, radius, length
 	m.fromC(c)
 }
 
+// SetBox sets the mass for a box of given properties.
 func (m *Mass) SetBox(density float64, lens Vector3) {
 	c := &C.dMass{}
 	C.dMassSetBox(c, C.dReal(density),
@@ -98,6 +108,7 @@ func (m *Mass) SetBox(density float64, lens Vector3) {
 	m.fromC(c)
 }
 
+// SetBoxTotal sets the mass for a box of given properties.
 func (m *Mass) SetBoxTotal(totalMass float64, lens Vector3) {
 	c := &C.dMass{}
 	C.dMassSetBoxTotal(c, C.dReal(totalMass),
@@ -105,6 +116,7 @@ func (m *Mass) SetBoxTotal(totalMass float64, lens Vector3) {
 	m.fromC(c)
 }
 
+// Adjust sets parameters based on the given total mass.
 func (m *Mass) Adjust(mass float64) {
 	c := &C.dMass{}
 	m.toC(c)
@@ -112,6 +124,7 @@ func (m *Mass) Adjust(mass float64) {
 	m.fromC(c)
 }
 
+// Translate translates the mass by vec.
 func (m *Mass) Translate(vec Vector3) {
 	c := &C.dMass{}
 	m.toC(c)
@@ -119,6 +132,7 @@ func (m *Mass) Translate(vec Vector3) {
 	m.fromC(c)
 }
 
+// Rotate rotates the mass by rot.
 func (m *Mass) Rotate(rot Matrix3) {
 	c := &C.dMass{}
 	m.toC(c)
@@ -126,6 +140,7 @@ func (m *Mass) Rotate(rot Matrix3) {
 	m.fromC(c)
 }
 
+// Add adds the other mass to this mass.
 func (m *Mass) Add(other *Mass) {
 	c, oc := &C.dMass{}, &C.dMass{}
 	m.toC(c)

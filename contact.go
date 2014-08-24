@@ -3,6 +3,7 @@ package ode
 // #include <ode/ode.h>
 import "C"
 
+// Contact parameter types
 const (
 	Mu2CtParam      = C.dContactMu2
 	AxisDepCtParam  = C.dContactAxisDep
@@ -23,8 +24,7 @@ const (
 	Approx1CtParam  = C.dContactApprox1
 )
 
-// SurfaceParameters
-
+// SurfaceParameters represents the parameters of a contact surface.
 type SurfaceParameters struct {
 	// must always be defined
 	Mode int
@@ -82,8 +82,7 @@ func (s *SurfaceParameters) toC(c *C.dSurfaceParameters) {
 	c.slip2 = C.dReal(s.Slip2)
 }
 
-// ContactGeom
-
+// ContactGeom represents a contact point.
 type ContactGeom struct {
 	Pos    Vector3
 	Normal Vector3
@@ -94,6 +93,7 @@ type ContactGeom struct {
 	Side2  int
 }
 
+// NewContactGeom returns a new ContactGeom.
 func NewContactGeom() *ContactGeom {
 	return &ContactGeom{
 		Pos:    NewVector3(),
@@ -121,14 +121,14 @@ func (g *ContactGeom) toC(c *C.dContactGeom) {
 	c.side2 = C.int(g.Side2)
 }
 
-// Contact
-
+// Contact represents a contact.
 type Contact struct {
 	Surface SurfaceParameters
 	Geom    ContactGeom
 	FDir1   Vector3
 }
 
+// NewContact returns a new Contact.
 func NewContact() *Contact {
 	return &Contact{
 		FDir1: NewVector3(),

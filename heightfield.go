@@ -7,8 +7,7 @@ import (
 	"unsafe"
 )
 
-// HeightfieldData
-
+// HeightfieldData represents heightfield data.
 type HeightfieldData uintptr
 
 func cToHeightfieldData(c C.dHeightfieldDataID) HeightfieldData {
@@ -19,10 +18,12 @@ func (h HeightfieldData) c() C.dHeightfieldDataID {
 	return C.dHeightfieldDataID(unsafe.Pointer(h))
 }
 
+// NewHeightfieldData returns a new HeightfieldData instance.
 func NewHeightfieldData() HeightfieldData {
 	return cToHeightfieldData(C.dGeomHeightfieldDataCreate())
 }
 
-func (d *HeightfieldData) Destroy() {
-	C.dGeomHeightfieldDataDestroy(d.c())
+// Destroy destroys the heightfield data.
+func (h *HeightfieldData) Destroy() {
+	C.dGeomHeightfieldDataDestroy(h.c())
 }
