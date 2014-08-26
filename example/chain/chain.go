@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"sync"
 
 	"github.com/ianremmler/ode"
 	"gopkg.in/qml.v1"
@@ -48,11 +47,6 @@ func cb(data interface{}, obj1, obj2 ode.Geom) {
 
 type Sim struct {
 	qml.Object
-	once sync.Once
-}
-
-func (s *Sim) Init() {
-
 }
 
 func (s *Sim) Iter() {
@@ -142,7 +136,7 @@ func main() {
 	world = ode.NewWorld()
 	space = ode.NilSpace().NewHashSpace()
 	body = make([]ode.Body, numSpheres)
-	joint = make([]ode.BallJoint, numSpheres)
+	joint = make([]ode.BallJoint, numSpheres-1)
 	ctGrp = ode.NewJointGroup(1000000)
 	sphere = make([]ode.Sphere, numSpheres)
 	mass = ode.NewMass()
