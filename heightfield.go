@@ -27,3 +27,8 @@ func NewHeightfieldData() HeightfieldData {
 func (h *HeightfieldData) Destroy() {
 	C.dGeomHeightfieldDataDestroy(h.c())
 }
+
+// Heightfield is a geometry representing a heightfield.
+type Heightfield struct {
+	GeomBase
+}

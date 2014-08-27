@@ -123,17 +123,17 @@ type JointFeedback struct {
 }
 
 func (f *JointFeedback) fromC(c *C.dJointFeedback) {
-	f.Force1.fromC(&c.f1[0])
-	f.Torque1.fromC(&c.t1[0])
-	f.Force2.fromC(&c.f2[0])
-	f.Torque2.fromC(&c.t2[0])
+	Vector(f.Force1).fromC(&c.f1[0])
+	Vector(f.Torque1).fromC(&c.t1[0])
+	Vector(f.Force2).fromC(&c.f2[0])
+	Vector(f.Torque2).fromC(&c.t2[0])
 }
 
 func (f *JointFeedback) toC(c *C.dJointFeedback) {
-	f.Force1.toC((*C.dReal)(&c.f1[0]))
-	f.Torque1.toC((*C.dReal)(&c.t1[0]))
-	f.Force2.toC((*C.dReal)(&c.f2[0]))
-	f.Torque2.toC((*C.dReal)(&c.t2[0]))
+	Vector(f.Force1).toC((*C.dReal)(&c.f1[0]))
+	Vector(f.Torque1).toC((*C.dReal)(&c.t1[0]))
+	Vector(f.Force2).toC((*C.dReal)(&c.f2[0]))
+	Vector(f.Torque2).toC((*C.dReal)(&c.t2[0]))
 }
 
 // JointGroup represents a group of joints.

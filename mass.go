@@ -12,14 +12,14 @@ type Mass struct {
 
 func (m *Mass) toC(c *C.dMass) {
 	c.mass = C.dReal(m.Mass)
-	m.Center.toC((*C.dReal)(&c.c[0]))
-	m.Inertia.toC((*C.dReal)(&c.I[0]))
+	Vector(m.Center).toC((*C.dReal)(&c.c[0]))
+	Matrix(m.Inertia).toC((*C.dReal)(&c.I[0]))
 }
 
 func (m *Mass) fromC(c *C.dMass) {
 	m.Mass = float64(c.mass)
-	m.Center.fromC((*C.dReal)(&c.c[0]))
-	m.Inertia.fromC((*C.dReal)(&c.I[0]))
+	Vector(m.Center).fromC((*C.dReal)(&c.c[0]))
+	Matrix(m.Inertia).fromC((*C.dReal)(&c.I[0]))
 }
 
 // NewMass returns a new Mass instance.
@@ -113,6 +113,20 @@ func (m *Mass) SetBoxTotal(totalMass float64, lens Vector3) {
 	c := &C.dMass{}
 	C.dMassSetBoxTotal(c, C.dReal(totalMass),
 		C.dReal(lens[0]), C.dReal(lens[1]), C.dReal(lens[2]))
+	m.fromC(c)
+}
+
+// SetTrimesh sets the mass for the given triangle mesh.
+func (m *Mass) SetTriMesh(density float64, mesh TriMesh) {
+	c := &C.dMass{}
+	C.dMassSetTrimesh(c, C.dReal(density), mesh.c())
+	m.fromC(c)
+}
+
+// SetTrimeshTotal sets the mass for the given triangle mesh.
+func (m *Mass) SetTriMeshTotal(totalMass float64, mesh TriMesh) {
+	c := &C.dMass{}
+	C.dMassSetTrimeshTotal(c, C.dReal(totalMass), mesh.c())
 	m.fromC(c)
 }
 

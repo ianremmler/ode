@@ -102,8 +102,8 @@ func NewContactGeom() *ContactGeom {
 }
 
 func (g *ContactGeom) fromC(c *C.dContactGeom) {
-	g.Pos.fromC(&c.pos[0])
-	g.Normal.fromC(&c.normal[0])
+	Vector(g.Pos).fromC(&c.pos[0])
+	Vector(g.Normal).fromC(&c.normal[0])
 	g.Depth = float64(c.depth)
 	g.G1 = cToGeom(c.g1)
 	g.G2 = cToGeom(c.g2)
@@ -112,8 +112,8 @@ func (g *ContactGeom) fromC(c *C.dContactGeom) {
 }
 
 func (g *ContactGeom) toC(c *C.dContactGeom) {
-	g.Pos.toC((*C.dReal)(&c.pos[0]))
-	g.Normal.toC((*C.dReal)(&c.normal[0]))
+	Vector(g.Pos).toC((*C.dReal)(&c.pos[0]))
+	Vector(g.Normal).toC((*C.dReal)(&c.normal[0]))
 	c.depth = C.dReal(g.Depth)
 	c.g1 = g.G1.c()
 	c.g2 = g.G2.c()
@@ -138,12 +138,12 @@ func NewContact() *Contact {
 
 func (c *Contact) fromC(cc *C.dContact) {
 	c.Surface.fromC(&cc.surface)
-	c.FDir1.fromC(&cc.fdir1[0])
+	Vector(c.FDir1).fromC(&cc.fdir1[0])
 	c.Geom.fromC(&cc.geom)
 }
 
 func (c *Contact) toC(cc *C.dContact) {
 	c.Surface.toC(&cc.surface)
-	c.FDir1.toC(&cc.fdir1[0])
+	Vector(c.FDir1).toC(&cc.fdir1[0])
 	c.Geom.toC(&cc.geom)
 }

@@ -103,6 +103,8 @@ func cToGeom(c C.dGeomID) Geom {
 		g = Ray{base}
 	case HeightfieldClass:
 		g = Heightfield{base}
+	case TriMeshClass:
+		g = TriMesh{base}
 	default:
 		g = base
 	}
@@ -520,9 +522,4 @@ func (r Ray) SetClosestHit(closestHit bool) {
 // ClosestHit returns whether only the closest hit will be reported.
 func (r Ray) ClosestHit() bool {
 	return C.dGeomRayGetClosestHit(r.c()) != 0
-}
-
-// Heightfield is a geometry representing a heightfield.
-type Heightfield struct {
-	GeomBase
 }
