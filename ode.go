@@ -46,33 +46,39 @@ func nearCallback(data unsafe.Pointer, obj1, obj2 C.dGeomID) {
 	cbData.fn(cbData.data, cToGeom(obj1), cToGeom(obj2))
 }
 
-// round up to nearest multiple of 4 for alignment purposes (ode likes that)
-func align4(n int) int {
-	return (n + 3) &^ 3
+// round num up to nearest multiple of align
+func alignNum(num, align int) int {
+	return (num + (align - 1)) &^ (align - 1)
 }
 
-func newVector(size int, vals []float64) []float64 {
-	alignedSize := align4(size)
-	v := make([]float64, size, alignedSize)
+// Vector represents a double precision vector.
+type Vector []float64
+
+// NewVector returns a new Vector instance.
+func NewVector(size, align int, vals ...float64) Vector {
+	alignSize := alignNum(size, align)
+	v := make(Vector, size, alignSize)
 	copy(v, vals)
 	return v
 }
 
-// Vector represents a vector.
-type Vector []float64
-
-func (v Vector) fromC(c *C.dReal) {
+func (v Vector) convertC(c *C.dReal, toC bool) {
 	for i := range v {
-		v[i] = float64(*c)
+		if toC {
+			*c = C.dReal(v[i])
+		} else {
+			v[i] = float64(*c)
+		}
 		c = (*C.dReal)(unsafe.Pointer(uintptr(unsafe.Pointer(c)) + unsafe.Sizeof(*c)))
 	}
 }
 
 func (v Vector) toC(c *C.dReal) {
-	for i := range v {
-		*c = C.dReal(v[i])
-		c = (*C.dReal)(unsafe.Pointer(uintptr(unsafe.Pointer(c)) + unsafe.Sizeof(*c)))
-	}
+	v.convertC(c, true)
+}
+
+func (v Vector) fromC(c *C.dReal) {
+	v.convertC(c, false)
 }
 
 // Vector3 represents a 3 component vector.
@@ -86,7 +92,7 @@ func cToVector3(a *C.dReal) Vector3 {
 
 // NewVector3 returns a new Vector3 instance.
 func NewVector3(vals ...float64) Vector3 {
-	return Vector3(newVector(3, vals))
+	return Vector3(NewVector(3, 4, vals...))
 }
 
 // Vector4 represents a 4 component vector.
@@ -94,37 +100,37 @@ type Vector4 Vector
 
 // NewVector4 returns a new Vector4 instance.
 func NewVector4(vals ...float64) Vector4 {
-	return Vector4(newVector(4, vals))
+	return Vector4(NewVector(4, 4, vals...))
 }
 
 // Quaternion represents a quaternion.
-type Quaternion []float64
+type Quaternion Vector
 
 // NewQuaternion returns a new Quaternion instance.
 func NewQuaternion(vals ...float64) Quaternion {
-	q := make(Quaternion, 4)
-	copy(q, vals)
-	return q
+	return Quaternion(NewVector(4, 1, vals...))
 }
 
 // AABB represents an axis-aligned bounding box.
-type AABB []float64
+type AABB Vector
 
 // NewAABB returns a new AABB instance.
 func NewAABB(vals ...float64) AABB {
-	aabb := make(AABB, 6)
-	copy(aabb, vals)
-	return aabb
+	return AABB(NewVector(6, 1, vals...))
 }
 
-func newMatrix(size int, vals []float64) [][]float64 {
-	mat := make([][]float64, size)
-	alignedSize := align4(size)
-	elts := make([]float64, alignedSize*size)
+// Matrix represents a double precision matrix.
+type Matrix [][]float64
+
+// NewVector returns a new Matrix instance.
+func NewMatrix(numRows, numCols, align int, vals ...float64) Matrix {
+	mat := make(Matrix, numRows)
+	numAlignCols := alignNum(numCols, align)
+	elts := make([]float64, numAlignCols*numRows)
 	for i := range mat {
-		mat[i], elts = elts[:size], elts[alignedSize:]
-		n := size
-		if len(vals) < size {
+		mat[i], elts = elts[:numCols:numAlignCols], elts[numAlignCols:]
+		n := numCols
+		if len(vals) < numCols {
 			n = len(vals)
 		}
 		copy(mat[i], vals[:n])
@@ -133,14 +139,15 @@ func newMatrix(size int, vals []float64) [][]float64 {
 	return mat
 }
 
-// Matrix represents a matrix.
-type Matrix [][]float64
-
-func (m Matrix) fromC(c *C.dReal) {
+func (m Matrix) convertC(c *C.dReal, toC bool) {
 	for i := range m {
-		for j := 0; j < align4(len(m[i])); j++ {
+		for j := 0; j < cap(m[i]); j++ {
 			if j < len(m[i]) {
-				m[i][j] = float64(*c)
+				if toC {
+					*c = C.dReal(m[i][j])
+				} else {
+					m[i][j] = float64(*c)
+				}
 			}
 			c = (*C.dReal)(unsafe.Pointer(uintptr(unsafe.Pointer(c)) + unsafe.Sizeof(*c)))
 		}
@@ -148,14 +155,11 @@ func (m Matrix) fromC(c *C.dReal) {
 }
 
 func (m Matrix) toC(c *C.dReal) {
-	for i := range m {
-		for j := 0; j < align4(len(m[i])); j++ {
-			if j < len(m[i]) {
-				*c = C.dReal(m[i][j])
-			}
-			c = (*C.dReal)(unsafe.Pointer(uintptr(unsafe.Pointer(c)) + unsafe.Sizeof(*c)))
-		}
-	}
+	m.convertC(c, true)
+}
+
+func (m Matrix) fromC(c *C.dReal) {
+	m.convertC(c, false)
 }
 
 // Matrix3 represents a 3x3 matrix.
@@ -163,7 +167,7 @@ type Matrix3 Matrix
 
 // NewMatrix3 returns a new Matrix3 instance.
 func NewMatrix3(vals ...float64) Matrix3 {
-	return Matrix3(newMatrix(3, vals))
+	return Matrix3(NewMatrix(3, 3, 4, vals...))
 }
 
 // Matrix4 represents a 4x4 matrix.
@@ -171,26 +175,23 @@ type Matrix4 Matrix
 
 // NewMatrix4 returns a new Matrix4 instance.
 func NewMatrix4(vals ...float64) Matrix4 {
-	return Matrix4(newMatrix(4, vals))
+	return Matrix4(NewMatrix(4, 4, 4, vals...))
 }
 
 // VertexList represents a list of 3D vertices.
-type VertexList [][]float64
+type VertexList Matrix
 
 // NewVertexList returns a new VertexList instance.
 func NewVertexList(size int, vals ...float64) VertexList {
-	list := make([][]float64, size)
-	elts := make([]float64, 3*size)
-	for i := range list {
-		list[i], elts = elts[:3], elts[3:]
-		n := 3
-		if len(vals) < 3 {
-			n = len(vals)
-		}
-		copy(list[i], vals[:n])
-		vals = vals[n:]
-	}
-	return VertexList(list)
+	return VertexList(NewMatrix(size, 3, 1, vals...))
+}
+
+// PlaneList represents a list of plane definitions.
+type PlaneList Matrix
+
+// NewPlaneList returns a new PlaneList instance.
+func NewPlaneList(size int, vals ...float64) PlaneList {
+	return PlaneList(NewMatrix(size, 4, 1, vals...))
 }
 
 // TriVertexIndexList represents a list of triangle vertex indices.
@@ -198,7 +199,7 @@ type TriVertexIndexList [][]uint32
 
 // NewTriVertexIndexList returns a new TriVertexIndexList instance.
 func NewTriVertexIndexList(size int, indices ...uint32) TriVertexIndexList {
-	list := make([][]uint32, size)
+	list := make(TriVertexIndexList, size)
 	elts := make([]uint32, 3*size)
 	for i := range list {
 		list[i], elts = elts[:3], elts[3:]
@@ -209,8 +210,11 @@ func NewTriVertexIndexList(size int, indices ...uint32) TriVertexIndexList {
 		copy(list[i], indices[:n])
 		indices = indices[n:]
 	}
-	return TriVertexIndexList(list)
+	return list
 }
+
+// PolygonList represents a list of polygon definitions
+type PolygonList []C.uint
 
 // Init initializes ODE.
 func Init(initFlags, allocFlags int) {

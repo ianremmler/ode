@@ -523,3 +523,14 @@ func (r Ray) SetClosestHit(closestHit bool) {
 func (r Ray) ClosestHit() bool {
 	return C.dGeomRayGetClosestHit(r.c()) != 0
 }
+
+// Convex is a geometry representing a convex object.
+type Convex struct {
+	GeomBase
+}
+
+// Set sets convex object data
+func (c Convex) Set(planes PlaneList, pts VertexList, polyList PolygonList) {
+	C.dGeomSetConvex(c.c(), (*C.dReal)(&planes[0][0]), C.uint(len(planes)),
+		(*C.dReal)(&pts[0][0]), C.uint(len(pts)), &polyList[0])
+}

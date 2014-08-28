@@ -192,6 +192,12 @@ func (s SpaceBase) NewHeightfield(data HeightfieldData, placeable bool) Heightfi
 	return cToGeom(C.dCreateHeightfield(s.c(), data.c(), C.int(btoi(placeable)))).(Heightfield)
 }
 
+// NewConvex returns a new Convex instance.
+func (s SpaceBase) NewConvex(planes PlaneList, pts VertexList, polyList PolygonList) Convex {
+	return cToGeom(C.dCreateConvex(s.c(), (*C.dReal)(&planes[0][0]), C.uint(len(planes)),
+		(*C.dReal)(&pts[0][0]), C.uint(len(pts)), &polyList[0])).(Convex)
+}
+
 // NewTriMesh returns a new TriMesh instance.
 func (s SpaceBase) NewTriMesh(data TriMeshData) TriMesh {
 	return cToGeom(C.dCreateTriMesh(s.c(), data.c(), nil, nil, nil)).(TriMesh)
