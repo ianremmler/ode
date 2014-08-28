@@ -13,9 +13,3 @@ Triangle mesh indices are expected to be 32 bit, which is the ODE default.  The
 following will configure ODE with these options:
 
 `> cd /path/to/ode-src; ./configure --enable-double-precision --enable-shared`
-
-Todo
-* Convex objects
-* Heightfields
-* Probably other things I missed
-* More documentation and tests
