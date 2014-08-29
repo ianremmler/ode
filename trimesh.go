@@ -25,6 +25,11 @@ func (t TriMeshData) c() C.dTriMeshDataID {
 	return C.dTriMeshDataID(unsafe.Pointer(t))
 }
 
+// NewTriMeshData returns a new TriMeshData instance.
+func NewTriMeshData() TriMeshData {
+	return cToTriMeshData(C.dGeomTriMeshDataCreate())
+}
+
 // Destroy destroys the triangle mesh data.
 func (t TriMeshData) Destroy() {
 	C.dGeomTriMeshDataDestroy(t.c())
