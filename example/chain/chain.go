@@ -7,7 +7,7 @@ import (
 
 	"github.com/ianremmler/ode"
 	"gopkg.in/qml.v1"
-	"gopkg.in/qml.v1/work-in-progress/gl"
+	gl "gopkg.in/qml.v1/gl/4.3core"
 )
 
 const (
