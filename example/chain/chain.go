@@ -7,7 +7,7 @@ import (
 
 	"github.com/ianremmler/ode"
 	"gopkg.in/qml.v1"
-	"gopkg.in/qml.v1/work-in-progress/gl"
+	"gopkg.in/qml.v1/gl/1.0"
 )
 
 const (
@@ -58,23 +58,24 @@ func (s *Sim) Iter() {
 }
 
 func (s *Sim) Paint(p *qml.Painter) {
-	diffuseColor := []gl.Float{0.5, 1, 1, 0}
-	diffusePos := []gl.Float{0, 0, 1, 0}
+	gl := GL.API(p)
+	diffuseColor := []float32{0.5, 1, 1, 0}
+	diffusePos := []float32{0, 0, 1, 0}
 
 	gl.Rotated(-45, 1, 0, 0)
 
-	gl.Lightfv(gl.LIGHT0, gl.DIFFUSE, diffuseColor)
-	gl.Lightfv(gl.LIGHT0, gl.POSITION, diffusePos)
-	gl.Enable(gl.LIGHT0)
-	gl.Enable(gl.LIGHTING)
-	gl.Enable(gl.DEPTH_TEST)
-	gl.Enable(gl.NORMALIZE)
+	gl.Lightfv(GL.LIGHT0, GL.DIFFUSE, diffuseColor)
+	gl.Lightfv(GL.LIGHT0, GL.POSITION, diffusePos)
+	gl.Enable(GL.LIGHT0)
+	gl.Enable(GL.LIGHTING)
+	gl.Enable(GL.DEPTH_TEST)
+	gl.Enable(GL.NORMALIZE)
 
 	gl.ClearColor(0, 0, 0, 0)
-	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+	gl.Clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT)
 
-	width := gl.Double(s.Int("width"))
-	height := gl.Double(s.Int("height"))
+	width := float64(s.Int("width"))
+	height := float64(s.Int("height"))
 
 	gl.PushMatrix()
 	scale := width / 5
@@ -83,9 +84,9 @@ func (s *Sim) Paint(p *qml.Painter) {
 	for i := range body {
 		pos := body[i].Position()
 		gl.PushMatrix()
-		gl.Translated(gl.Double(pos[0]), gl.Double(pos[1]), gl.Double(pos[2]))
+		gl.Translated(pos[0], pos[1], pos[2])
 		gl.Scaled(sphereRadius, sphereRadius, sphereRadius)
-		drawSphere(16, 16)
+		drawSphere(gl, 16, 16)
 		gl.PopMatrix()
 	}
 	gl.PopMatrix()
@@ -109,22 +110,22 @@ func run() error {
 	return nil
 }
 
-func drawSphere(latSegs, lonSegs int) {
+func drawSphere(gl *GL.GL, latSegs, lonSegs int) {
 	for i := 0; i < latSegs; i++ {
 		latFrac0, latFrac1 := float64(i)/float64(latSegs), float64(i+1)/float64(latSegs)
 		latAngle0, latAngle1 := math.Pi*(latFrac0-0.5), math.Pi*(latFrac1-0.5)
 		z0, z1 := math.Sin(latAngle0), math.Sin(latAngle1)
 		r0, r1 := math.Cos(latAngle0), math.Cos(latAngle1)
-		gl.Begin(gl.QUAD_STRIP)
+		gl.Begin(GL.QUAD_STRIP)
 		for j := 0; j <= lonSegs; j++ {
 			lonFrac := float64(j) / float64(lonSegs)
 			lonAngle := 2 * math.Pi * lonFrac
 			x0, x1 := r0*math.Cos(lonAngle), r1*math.Cos(lonAngle)
 			y0, y1 := r0*math.Sin(lonAngle), r1*math.Sin(lonAngle)
-			gl.Normal3d(gl.Double(x0), gl.Double(y0), gl.Double(z0))
-			gl.Vertex3d(gl.Double(x0), gl.Double(y0), gl.Double(z0))
-			gl.Normal3d(gl.Double(x1), gl.Double(y1), gl.Double(z1))
-			gl.Vertex3d(gl.Double(x1), gl.Double(y1), gl.Double(z1))
+			gl.Normal3d(x0, y0, z0)
+			gl.Vertex3d(x0, y0, z0)
+			gl.Normal3d(x1, y1, z1)
+			gl.Vertex3d(x1, y1, z1)
 		}
 		gl.End()
 	}
