@@ -40,9 +40,11 @@ type nearCallbackData struct {
 	fn   NearCallback
 }
 
+var nearCallbackDataMap = NewCGOMap()
+
 //export nearCallback
 func nearCallback(data unsafe.Pointer, obj1, obj2 C.dGeomID) {
-	cbData := (*nearCallbackData)(data)
+	cbData := nearCallbackDataMap.Get(int(uintptr(data))).(*nearCallbackData)
 	cbData.fn(cbData.data, cToGeom(obj1), cToGeom(obj2))
 }
 
