@@ -183,7 +183,7 @@ type VertexList Matrix
 
 // NewVertexList returns a new VertexList instance.
 func NewVertexList(size int, vals ...float64) VertexList {
-	return VertexList(NewMatrix(size, 3, 1, vals...))
+	return VertexList(NewMatrix(size, 3, 4, vals...))
 }
 
 // PlaneList represents a list of plane definitions.
@@ -195,22 +195,11 @@ func NewPlaneList(size int, vals ...float64) PlaneList {
 }
 
 // TriVertexIndexList represents a list of triangle vertex indices.
-type TriVertexIndexList [][]uint32
+type TriVertexIndexList []uint32
 
 // NewTriVertexIndexList returns a new TriVertexIndexList instance.
 func NewTriVertexIndexList(size int, indices ...uint32) TriVertexIndexList {
-	list := make(TriVertexIndexList, size)
-	elts := make([]uint32, 3*size)
-	for i := range list {
-		list[i], elts = elts[:3], elts[3:]
-		n := 3
-		if len(indices) < 3 {
-			n = len(indices)
-		}
-		copy(list[i], indices[:n])
-		indices = indices[n:]
-	}
-	return list
+	return indices[:size*3]
 }
 
 // PolygonList represents a list of polygon definitions

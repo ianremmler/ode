@@ -38,7 +38,7 @@ func (t TriMeshData) Destroy() {
 // Build builds a triangle mesh from the given data.
 func (t TriMeshData) Build(verts VertexList, tris TriVertexIndexList) {
 	C.dGeomTriMeshDataBuildSimple(t.c(), (*C.dReal)(&verts[0][0]), C.int(len(verts)),
-		(*C.dTriIndex)(&tris[0][0]), C.int(len(tris)))
+		(*C.dTriIndex)(&tris[0]), C.int(len(tris)))
 }
 
 // Preprocess preprocesses the triangle mesh data.
