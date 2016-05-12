@@ -42,6 +42,7 @@ type Space interface {
 	NewCapsule(radius, length float64) Capsule
 	NewCylinder(radius, length float64) Cylinder
 	NewRay(length float64) Ray
+	NewTriMesh(data TriMeshData) TriMesh
 	NewHeightfield(data HeightfieldData, placeable bool) Heightfield
 	NewSimpleSpace() SimpleSpace
 	NewHashSpace() HashSpace
@@ -152,7 +153,9 @@ func (s SpaceBase) Geom(index int) Geom {
 // Collide tests for collision between  contained objects.
 func (s SpaceBase) Collide(data interface{}, cb NearCallback) {
 	cbData := &nearCallbackData{fn: cb, data: data}
-	C.dSpaceCollide(s.c(), unsafe.Pointer(cbData),
+	index := nearCallbackDataMap.Set(cbData)
+	defer nearCallbackDataMap.Delete(index)
+	C.dSpaceCollide(s.c(), unsafe.Pointer(uintptr(index)),
 		(*C.dNearCallback)(C.callNearCallback))
 }
 

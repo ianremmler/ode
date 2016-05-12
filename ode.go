@@ -40,9 +40,11 @@ type nearCallbackData struct {
 	fn   NearCallback
 }
 
+var nearCallbackDataMap = NewCGOMap()
+
 //export nearCallback
 func nearCallback(data unsafe.Pointer, obj1, obj2 C.dGeomID) {
-	cbData := (*nearCallbackData)(data)
+	cbData := nearCallbackDataMap.Get(int(uintptr(data))).(*nearCallbackData)
 	cbData.fn(cbData.data, cToGeom(obj1), cToGeom(obj2))
 }
 
@@ -183,7 +185,7 @@ type VertexList Matrix
 
 // NewVertexList returns a new VertexList instance.
 func NewVertexList(size int, vals ...float64) VertexList {
-	return VertexList(NewMatrix(size, 3, 1, vals...))
+	return VertexList(NewMatrix(size, 3, 4, vals...))
 }
 
 // PlaneList represents a list of plane definitions.
