@@ -47,7 +47,7 @@ func (t TriMeshData) Build(verts VertexList, tris TriVertexIndexList) {
 	delete(vertexListMap, int(t))
 	delete(indexListMap, int(t))
 	C.dGeomTriMeshDataBuildSimple(t.c(), (*C.dReal)(&verts[0][0]), C.int(len(verts)),
-		(*C.dTriIndex)(&tris[0]), C.int(len(tris)))
+		(*C.dTriIndex)(&tris[0][0]), C.int(len(tris)*3))
 	vertexListMap[int(t)] = verts // avoid GC mark and sweep
 	indexListMap[int(t)] = tris   // avoid GC mark and sweep
 }
