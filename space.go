@@ -42,6 +42,7 @@ type Space interface {
 	NewCapsule(radius, length float64) Capsule
 	NewCylinder(radius, length float64) Cylinder
 	NewRay(length float64) Ray
+	NewTriMesh(data TriMeshData) TriMesh
 	NewHeightfield(data HeightfieldData, placeable bool) Heightfield
 	NewSimpleSpace() SimpleSpace
 	NewHashSpace() HashSpace
